@@ -1,0 +1,4 @@
+export(
+cr.test,cgf.test,coeff,allcr.test,cr.gof
+)
+importFrom("stats","pchisq")

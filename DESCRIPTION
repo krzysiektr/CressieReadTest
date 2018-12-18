@@ -1,0 +1,10 @@
+Package: CressieReadTest
+Type: Package
+Title: The D-squared Cressie-Read test
+Version: 1.0
+Date: 2013-05-25
+Author: Krzysztof Trajkowski
+Maintainer: Krzysztof Trajkowski <seaproject@poczta.onet.pl>
+Description: The D-squared Cressie-Read test.
+License: GPL-2
+Packaged: 2013-05-25 16:45:59 UTC; krz
