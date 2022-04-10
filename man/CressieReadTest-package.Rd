@@ -12,7 +12,7 @@ The D-squared Cressie-Read test
 \tabular{ll}{
 Package: \tab CressieReadTest\cr
 Type: \tab Package\cr
-Version: \tab 1.0\cr
+Version: \tab 1.0.0\cr
 Date: \tab 2013-05-25\cr
 License: \tab GPL-2\cr
 }
