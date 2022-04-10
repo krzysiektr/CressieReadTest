@@ -1,3 +1,7 @@
 # CressieReadTest
 
-Packages
+install packages
+
+```
+devtools::install_github("krzysiektr/CressieReadTest")
+```
