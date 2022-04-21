@@ -14,6 +14,7 @@ cr.test(x, lambda=2/3)
 \value{
 An object of class "htest" containing the following components:
 \describe{
+\item{estimate}{estimates contingency coefficient}
 \item{parameter}{the degrees of freedom and lambda parameter}
 \item{statistic}{statistic test value}
 \item{p.value}{p-value}

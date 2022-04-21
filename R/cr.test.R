@@ -7,6 +7,7 @@
 #' @usage cr.test(x, lambda=2/3)
 #' @return An object of class "htest" containing the following components:
 #' \describe{
+#' \item{estimate}{estimates contingency coefficient}
 #' \item{parameter}{the degrees of freedom and lambda parameter}
 #' \item{statistic}{statistic test value}
 #' \item{p.value}{p-value}
@@ -53,52 +54,57 @@ cr.test=function(x, lambda=2/3)
   E <- outer(mr,mk,"*")/sm
   Df <- (nrow(x)-1)*(ncol(x)-1)
   D <- (2/(lambda*(lambda+1)))*sum(x*( (x/E)^(lambda)-1 ))
+  CHI2 <- (2/(1*(1+1)))*sum(x*( (x/E)^(1)-1 ))
+  C1 <- sqrt(CHI2/sm) # Y-Yule'a
+  C2 <- sqrt(CHI2/(sm+CHI2)) # C-Pearson
+  C3 <- sqrt((CHI2)/(sm*sqrt((ncol(x)-1)*(nrow(x)-1 ) )) ) # V-Cramer
+  C4 <- sqrt((CHI2)/(sm*sqrt((ncol(x)-1)*(nrow(x)-1 ) )) ) # T-Czupurow
   pvalue <- pchisq(D,Df,lower.tail=FALSE)
 
   if (lambda==2/3) {
-    RVAL <- list(statistic = c(D = D), parameter = c(lambda = lambda, df = Df), p.value = pvalue,
+    RVAL <- list(statistic = c(D = D), estimate=c(Y_Yulea = C1,C_Pearson = C2,V_Cramer = C3,T_Czupurow = C4), parameter = c(lambda = lambda, df = Df), p.value = pvalue,
                  method = "D-squared Cressie-Read test",
                  data.name = DNAME)
     class(RVAL) <- "htest"
     return(RVAL)
   }
   else if(lambda==1) {
-    RVAL <- list(statistic = c(D = D), parameter = c(lambda = lambda, df = Df), p.value = pvalue,
+    RVAL <- list(statistic = c(D = D), estimate=c(Y_Yulea = C1,C_Pearson = C2,V_Cramer = C3,T_Czupurow = C4), parameter = c(lambda = lambda, df = Df), p.value = pvalue,
                  method = "D-squared Cressie-Read test (Pearson)",
                  data.name = DNAME)
     class(RVAL) <- "htest"
     return(RVAL)
   }
   else if(lambda <= 1e-05 && lambda > 0 || lambda < 0 && lambda >= -1e-05) {
-    RVAL <- list(statistic = c(D = D), parameter = c(lambda = lambda, df = Df), p.value = pvalue,
+    RVAL <- list(statistic = c(D = D), estimate=c(Y_Yulea = C1,C_Pearson = C2,V_Cramer = C3,T_Czupurow = C4), parameter = c(lambda = lambda, df = Df), p.value = pvalue,
                  method = "D-squared Cressie-Read test (G-squared)",
                  data.name = DNAME)
     class(RVAL) <- "htest"
     return(RVAL)
   }
   else if(lambda <= -0.99999 && lambda > -1 || lambda < -1 && lambda >= -1.00001 ) {
-    RVAL <- list(statistic = c(D = D), parameter = c(lambda = lambda, df = Df), p.value = pvalue,
+    RVAL <- list(statistic = c(D = D), estimate=c(Y_Yulea = C1,C_Pearson = C2,V_Cramer = C3,T_Czupurow = C4), parameter = c(lambda = lambda, df = Df), p.value = pvalue,
                  method = "D-squared Cressie-Read test (Kullback-Leibler)",
                  data.name = DNAME)
     class(RVAL) <- "htest"
     return(RVAL)
   }
   else if(lambda == -1/2) {
-    RVAL <- list(statistic = c(D = D), parameter = c(lambda = lambda, df = Df), p.value = pvalue,
+    RVAL <- list(statistic = c(D = D), estimate=c(Y_Yulea = C1,C_Pearson = C2,V_Cramer = C3,T_Czupurow = C4), parameter = c(lambda = lambda, df = Df), p.value = pvalue,
                  method = "D-squared Cressie-Read test (Freeman-Tukey's)",
                  data.name = DNAME)
     class(RVAL) <- "htest"
     return(RVAL)
   }
   else if(lambda == -2) {
-    RVAL <- list(statistic = c(D = D), parameter = c(lambda = lambda, df = Df), p.value = pvalue,
+    RVAL <- list(statistic = c(D = D), estimate=c(Y_Yulea = C1,C_Pearson = C2,V_Cramer = C3,T_Czupurow = C4), parameter = c(lambda = lambda, df = Df), p.value = pvalue,
                  method = "D-squared Cressie-Read test (Neyman's)",
                  data.name = DNAME)
     class(RVAL) <- "htest"
     return(RVAL)
   }
   else {
-    RVAL <- list(statistic = c(D = D), parameter = c(lambda = lambda, df = Df), p.value = pvalue,
+    RVAL <- list(statistic = c(D = D), estimate=c(Y_Yulea = C1,C_Pearson = C2,V_Cramer = C3,T_Czupurow = C4), parameter = c(lambda = lambda, df = Df), p.value = pvalue,
                  method = "D-squared Cressie-Read test",
                  data.name = DNAME)
     class(RVAL) <- "htest"
