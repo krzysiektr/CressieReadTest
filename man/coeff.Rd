@@ -10,7 +10,7 @@ coeff(x)
 \item{x}{contingency table.}
 }
 \description{
-Computes contingency coefficient: C-Pearson, T-Czupurow, Fi-Yule'a, V-Cramer.
+Computes contingency coefficient: C-Pearson, T-Czupurow, Phi-Yule'a, V-Cramer.
 }
 \examples{
 # data:

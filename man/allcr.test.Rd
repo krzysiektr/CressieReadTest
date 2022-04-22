@@ -2,7 +2,7 @@
 % Please edit documentation in R/allcr.test.R
 \name{allcr.test}
 \alias{allcr.test}
-\title{All tests of the family Cressie-Read for discrete data.}
+\title{All tests of the family Cressie-Read for contingency table.}
 \usage{
 allcr.test(x, lambda = 2/3)
 }

@@ -1,4 +1,4 @@
-#' @title All tests of the family Cressie-Read for discrete data.
+#' @title All tests of the family Cressie-Read for contingency table.
 #'
 #' @description
 #' All tests of the family Cressie-Read and contingency coefficient.

@@ -1,11 +1,11 @@
-#' @title The Cressie-Read test for discrete data.
+#' @title The Cressie-Read test for contingency table.
 #'
 #' @description
 #' Calculates statistics X-squared, G-squared, F-squared for contingency table.
 #'
 #' @param x contingency table.
 #' @param test "gw","g", "p", "n", "ft", "kl"
-#' @usage cgf.test(x, test="gw")
+#' @usage cgf.test(x, test="pc")
 #' @return An object of class "htest" containing the following components:
 #' \describe{
 #' \item{parameter}{the degrees of freedom}
@@ -19,13 +19,16 @@
 #' m <- matrix(c(23,32,45,26),2,2)
 #'
 #' # LR test with correction:
-#' cgf.test(m)
+#' cgf.test(m, test="gw")
 #'
 #' # LR test without correction:
 #' cgf.test(m, test="g")
 #'
 #' # test Pearson:
 #' cgf.test(m, test="p")
+#'
+#' # test Pearson with correction:
+#' cgf.test(m)
 #'
 #' @rdname cgf.test
 #'
@@ -38,7 +41,7 @@
 #' @export
 #'
 
-cgf.test=function(x, test="gw")
+cgf.test=function(x, test="pc")
 {
   DNAME <- deparse(substitute(x))
   mr <- apply(x,1,sum); mk <- apply(x,2,sum); sm <- sum(mr)
@@ -47,6 +50,11 @@ cgf.test=function(x, test="gw")
   E <- outer(mr,mk,"*")/sm
   G <- 2*(sum(x*log(x/E)))
   P <- sum((x-E)^2/E)
+  C1 <- sqrt(P/sm) # Y-Yule'a
+  C2 <- sqrt(P/(sm+P)) # C-Pearson
+  C3 <- sqrt((P)/(sm*sqrt((ncol(x)-1)*(nrow(x)-1 ) )) ) # V-Cramer
+  C4 <- sqrt((P)/(sm*sqrt((ncol(x)-1)*(nrow(x)-1 ) )) ) # T-Tschuprow
+  Pc <- sum((abs(x - E) - 0.5)^2/E)
   FT <- 4*sum((sqrt(x)-sqrt(E))^2)
   N <- sum((x-E)^2/x)
   KL <- 2*sum(E*log(E/x))
@@ -58,43 +66,51 @@ cgf.test=function(x, test="gw")
   pvalueFT <- pchisq(FT,Df,lower.tail=FALSE)
   pvalueKL <- pchisq(KL,Df,lower.tail=FALSE)
   pvalueN <- pchisq(N,Df,lower.tail=FALSE)
+  pvaluePc <- pchisq(Pc,Df,lower.tail=FALSE)
   if (test=="gw") {
-    RVAL <- list(statistic = c(Gw = Gw), parameter = c(df = Df), p.value = pvalueB,
+    RVAL <- list(statistic = c(Gw = Gw), estimate=c(Y_Yulea = C1,C_Pearson = C2,V_Cramer = C3,T_Tschuprow = C4), parameter = c(df = Df), p.value = pvalueB,
                  method = "G-squared Likelihood Ratio test with Williams correction",
                  data.name = DNAME)
     class(RVAL) <- "htest"
     return(RVAL)
   }
   else if(test=="g") {
-    RVAL <- list(statistic = c(G = G), parameter = c(df = Df), p.value = pvalueA,
+    RVAL <- list(statistic = c(G = G), estimate=c(Y_Yulea = C1,C_Pearson = C2,V_Cramer = C3,T_Tschuprow = C4), parameter = c(df = Df), p.value = pvalueA,
                  method = "G-squared Likelihood Ratio test",
                  data.name = DNAME)
     class(RVAL) <- "htest"
     return(RVAL)
   }
   else if(test=="p") {
-    RVAL <- list(statistic = c(P = P),  parameter = c(df = Df), p.value = pvalueP,
+    RVAL <- list(statistic = c(P = P), estimate=c(Y_Yulea = C1,C_Pearson = C2,V_Cramer = C3,T_Tschuprow = C4),  parameter = c(df = Df), p.value = pvalueP,
                  method = "X-squared Pearson test",
                  data.name = DNAME)
     class(RVAL) <- "htest"
     return(RVAL)
   }
+    else if(test=="pc") {
+      RVAL <- list(statistic = c(Pc = Pc), estimate=c(Y_Yulea = C1,C_Pearson = C2,V_Cramer = C3,T_Tschuprow = C4),  parameter = c(df = Df), p.value = pvaluePc,
+                   method = "X-squared Pearson test with Yates' continuity correction",
+                   data.name = DNAME)
+      class(RVAL) <- "htest"
+      return(RVAL)
+  }
   else if(test=="ft") {
-    RVAL <- list(statistic = c(FT = FT),  parameter = c(df = Df), p.value = pvalueFT,
+    RVAL <- list(statistic = c(FT = FT), estimate=c(Y_Yulea = C1,C_Pearson = C2,V_Cramer = C3,T_Tschuprow = C4),  parameter = c(df = Df), p.value = pvalueFT,
                  method = "F-squared Freeman-Tukey's test",
                  data.name = DNAME)
     class(RVAL) <- "htest"
     return(RVAL)
   }
   else if(test=="kl") {
-    RVAL <- list(statistic = c(KL = KL),  parameter = c(df = Df), p.value = pvalueKL,
+    RVAL <- list(statistic = c(KL = KL), estimate=c(Y_Yulea = C1,C_Pearson = C2,V_Cramer = C3,T_Tschuprow = C4),  parameter = c(df = Df), p.value = pvalueKL,
                  method = "G-squared Kullback-Leibler test",
                  data.name = DNAME)
     class(RVAL) <- "htest"
     return(RVAL)
   }
   else if(test=="n") {
-    RVAL <- list(statistic = c(N = N), parameter = c(df = Df), p.value = pvalueN,
+    RVAL <- list(statistic = c(N = N), estimate=c(Y_Yulea = C1,C_Pearson = C2,V_Cramer = C3,T_Tschuprow = C4), parameter = c(df = Df), p.value = pvalueN,
                  method = "X-squared Neyman's test",
                  data.name = DNAME)
     class(RVAL) <- "htest"

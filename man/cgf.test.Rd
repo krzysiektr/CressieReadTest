@@ -2,9 +2,9 @@
 % Please edit documentation in R/cgf.test.R
 \name{cgf.test}
 \alias{cgf.test}
-\title{The Cressie-Read test for discrete data.}
+\title{The Cressie-Read test for contingency table.}
 \usage{
-cgf.test(x, test="gw")
+cgf.test(x, test="pc")
 }
 \arguments{
 \item{x}{contingency table.}
@@ -26,13 +26,16 @@ Calculates statistics X-squared, G-squared, F-squared for contingency table.
 m <- matrix(c(23,32,45,26),2,2)
 
 # LR test with correction:
-cgf.test(m)
+cgf.test(m, test="gw")
 
 # LR test without correction:
 cgf.test(m, test="g")
 
 # test Pearson:
 cgf.test(m, test="p")
+
+# test Pearson with correction:
+cgf.test(m)
 
 }
 \references{

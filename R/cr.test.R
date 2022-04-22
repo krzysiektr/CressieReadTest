@@ -1,7 +1,7 @@
-#' @title The D-squared Cressie-Read test
+#' @title The Cressie-Read test for contingency table.
 #'
 #' @description
-#' Computes D-squared Cressie-Read test.
+#' Computes D-squared Cressie-Read test for contingency table.
 #' @param x contingency table.
 #' @param lambda lambda parameter lambda test Cressie-Read.
 #' @usage cr.test(x, lambda=2/3)

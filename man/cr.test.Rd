@@ -2,7 +2,7 @@
 % Please edit documentation in R/cr.test.R
 \name{cr.test}
 \alias{cr.test}
-\title{The D-squared Cressie-Read test}
+\title{The Cressie-Read test for contingency table.}
 \usage{
 cr.test(x, lambda=2/3)
 }
@@ -21,7 +21,7 @@ An object of class "htest" containing the following components:
          }
 }
 \description{
-Computes D-squared Cressie-Read test.
+Computes D-squared Cressie-Read test for contingency table.
 }
 \examples{
 # data:
