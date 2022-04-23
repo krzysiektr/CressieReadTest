@@ -26,7 +26,7 @@
 #' @references Noel Cressie and Timothy R. C. Read (1984).
 #' Multinomial Goodness-of-Fit Test. Journal of the Royal Statistical Society. Series B (Methodological), Vol. 46, No. 3 (1984), 440-464.
 #'
-#' @importFrom stats dgamma dpois dnbinom dnorm dbeta nlminb pchisq pgamma ppois pnbinom pnorm pbeta sd var
+#' @importFrom stats dgamma dpois dnbinom dnorm dbeta nlminb pchisq pgamma ppois pnbinom pnorm pbeta sd var integrate
 #'
 #' @seealso \code{\link[nortest]{pearson.test}} \code{\link{ks.test}} \code{\link[ADGofTest]{ad.test}} \code{\link[vsgoftest]{vs.test}}
 #' @export
@@ -93,10 +93,11 @@ chi2.gof=function(x, dist="norm", lambda=1)
   }
   else if(dist=="betap") {
     fB <- function(x,shape1,shape2) log(x^(shape1-1))-(shape1+shape2)*log(1+x)-lbeta(shape1,shape2)
+    pB <- function(shape1,shape2,h) integrate(function(x) (x^(shape1-1)*(1+x)^(-shape1-shape2))/beta(shape1,shape2),0,h)
     LL <- with(function(par,data) {
       shape1= par[1]
       shape2= par[2]
-      -sum(fB(x=x,shape1=shape1,shape2 = shape2))
+      -sum(fB(x = x, shape1 = shape1, shape2 = shape2))
     },data = data.frame(x=x))
     MU = mean(x)
     VR = var(x)
@@ -104,7 +105,7 @@ chi2.gof=function(x, dist="norm", lambda=1)
     G1 <- as.numeric(res$par[1])
     G2 <- as.numeric(res$par[2])
     GG <- -1*as.numeric(res$objective)
-    num4 <- floor(1 + n.classes * pbeta(x, shape1=G1, shape2=G2))
+    num4 <- floor(1 + n.classes * sapply(1:length(x),function(i) pB(shape1=G1, shape2=G2,x[i])$value))
     count4 <- tabulate(num4, n.classes)
     ST4 <- (2/(lambda*(lambda+1)))*sum(count4*( (count4/(n*prob))^(lambda)-1 ))
     pvalue4 <- pchisq(ST4, n.classes - 2 - 1, lower.tail = FALSE)
