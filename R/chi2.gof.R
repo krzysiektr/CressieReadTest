@@ -26,7 +26,7 @@
 #' @references Noel Cressie and Timothy R. C. Read (1984).
 #' Multinomial Goodness-of-Fit Test. Journal of the Royal Statistical Society. Series B (Methodological), Vol. 46, No. 3 (1984), 440-464.
 #'
-#' @importFrom stats dgamma dpois dnbinom dnorm dbeta nlminb pchisq pgamma ppois pnbinom pnorm pbeta sd var integrate
+#' @importFrom stats dgamma dpois dnbinom dnorm dbeta nlminb pchisq pgamma ppois pnbinom pnorm pbeta sd var integrate dt pt
 #'
 #' @seealso \code{\link[nortest]{pearson.test}} \code{\link{ks.test}} \code{\link[ADGofTest]{ad.test}} \code{\link[vsgoftest]{vs.test}}
 #' @export
@@ -111,6 +111,30 @@ chi2.gof=function(x, dist="norm", lambda=1)
     pvalue4 <- pchisq(ST4, n.classes - 2 - 1, lower.tail = FALSE)
     RVAL <- list(statistic = c(CR=ST4), parameter = c(df=Df,lambda=lambda), p.value = pvalue4, estimate =c(shape1=G1, shape2=G2, loglik=GG),
                  method = "Cressie-Read Goodness-of-Fit Test - aka Beta Prime distributions",
+                 data.name = DNAME)
+    class(RVAL) <- "htest"
+    return(RVAL)
+  }
+  else if(dist=="t") {
+    dt_ls <- function(x, df=df, mu=mu, sigma=sigma) 1/sigma * dt((x - mu)/sigma, df)
+    pt_ls <- function(q, df=df, mu=mu, sigma=sigma)  pt((q - mu)/sigma, df)
+    LL <- with(function(par,data) {
+      df= par[1]
+      mu= par[2]
+      sigma = par[3]
+      -sum(log(dt_ls(x = x, df=df, mu=mu, sigma=sigma)))
+    },data = data.frame(x=x))
+    res <- nlminb(start = c(df=3 ,mu=mean(x),sigma=sd(x),lower=c(1,-1, 0.001) ),objective=LL)
+    G1 <- as.numeric(res$par[1])
+    G2 <- as.numeric(res$par[2])
+    G3 <- as.numeric(res$par[3])
+    GG <- -1*as.numeric(res$objective)
+    num5 <- floor(1 + n.classes * pt_ls(x, df=G1, mu=G2, sigma=G3))
+    count5 <- tabulate(num5, n.classes)
+    ST5 <- (2/(lambda*(lambda+1)))*sum(count5*( (count5/(n*prob))^(lambda)-1 ))
+    pvalue5 <- pchisq(ST5, n.classes - 2 - 1, lower.tail = FALSE)
+    RVAL <- list(statistic = c(CR=ST5), parameter = c(df=Df,lambda=lambda), p.value = pvalue5, estimate =c(df=G1, mu=G2, std=G3,loglik=GG),
+                 method = "Cressie-Read Goodness-of-Fit Test - t-Student distributions",
                  data.name = DNAME)
     class(RVAL) <- "htest"
     return(RVAL)
