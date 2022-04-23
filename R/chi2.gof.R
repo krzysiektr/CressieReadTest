@@ -1,9 +1,9 @@
 #' @title The Cressie-Read test for continuous data.
 #'
 #' @description
-#' Goodnes of fit test for distributions: normal, gamma and beta.
+#' Goodnes of fit test for distributions: normal, gamma, beta and betap (aka Beta Prime).
 #' @param x a numeric vector of values.
-#' @param dist names distributions: norm (deflaut), gamma and beta
+#' @param dist names distributions: norm (deflaut), gamma, beta and betap (aka Beta Prime).
 #' @param lambda numeric parametr
 #' @usage chi2.gof(x, dist="norm", lambda=1)
 #' @return An object of class "htest" containing the following components:
@@ -26,7 +26,7 @@
 #' @references Noel Cressie and Timothy R. C. Read (1984).
 #' Multinomial Goodness-of-Fit Test. Journal of the Royal Statistical Society. Series B (Methodological), Vol. 46, No. 3 (1984), 440-464.
 #'
-#' @importFrom stats dgamma dpois dnbinom dnorm nlminb pchisq pgamma ppois pnbinom pnorm sd var
+#' @importFrom stats dgamma dpois dnbinom dnorm dbeta nlminb pchisq pgamma ppois pnbinom pnorm pbeta sd var
 #'
 #' @seealso \code{\link[nortest]{pearson.test}} \code{\link{ks.test}} \code{\link[ADGofTest]{ad.test}} \code{\link[vsgoftest]{vs.test}}
 #' @export
@@ -91,4 +91,32 @@ chi2.gof=function(x, dist="norm", lambda=1)
     class(RVAL) <- "htest"
     return(RVAL)
   }
+  else if(dist=="betap") {
+    fB <- function(x,shape1,shape2) log(x^(shape1-1))-(shape1+shape2)*log(1+x)-lbeta(shape1,shape2)
+    LL <- with(function(par,data) {
+      shape1= par[1]
+      shape2= par[2]
+      -sum(fB(x=x,shape1=shape1,shape2 = shape2))
+    },data = data.frame(x=x))
+    MU = mean(x)
+    VR = var(x)
+    res <- nlminb(start = c(shape1=(MU*VR+MU^3+MU^2)/VR ,shape2=(2*VR+MU^2+MU)/VR ),objective=LL)
+    G1 <- as.numeric(res$par[1])
+    G2 <- as.numeric(res$par[2])
+    GG <- -1*as.numeric(res$objective)
+    num4 <- floor(1 + n.classes * pbeta(x, shape1=G1, shape2=G2))
+    count4 <- tabulate(num4, n.classes)
+    ST4 <- (2/(lambda*(lambda+1)))*sum(count4*( (count4/(n*prob))^(lambda)-1 ))
+    pvalue4 <- pchisq(ST4, n.classes - 2 - 1, lower.tail = FALSE)
+    RVAL <- list(statistic = c(CR=ST4), parameter = c(df=Df,lambda=lambda), p.value = pvalue4, estimate =c(shape1=G1, shape2=G2, loglik=GG),
+                 method = "Cressie-Read Goodness-of-Fit Test - aka Beta Prime distributions",
+                 data.name = DNAME)
+    class(RVAL) <- "htest"
+    return(RVAL)
+  }
 }
+
+
+
+
+

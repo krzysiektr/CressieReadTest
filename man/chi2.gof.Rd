@@ -9,7 +9,7 @@ chi2.gof(x, dist="norm", lambda=1)
 \arguments{
 \item{x}{a numeric vector of values.}
 
-\item{dist}{names distributions: norm (deflaut) or gamma}
+\item{dist}{names distributions: norm (deflaut), gamma, beta and betap (aka Beta Prime).}
 
 \item{lambda}{numeric parametr}
 }
@@ -23,7 +23,7 @@ An object of class "htest" containing the following components:
          }
 }
 \description{
-Goodnes of fit test for two distributions: normal and gamma.
+Goodnes of fit test for distributions: normal, gamma, beta and betap (aka Beta Prime).
 }
 \note{
 estimate parameter in \code{\link[fitdistrplus]{fitdist}}.
