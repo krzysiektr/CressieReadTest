@@ -1,9 +1,9 @@
 #' @title The Cressie-Read test for continuous data.
 #'
 #' @description
-#' Goodnes of fit test for distributions: normal, gamma, beta and betap (aka Beta Prime).
+#' Goodnes of fit test for distributions: normal, t-Student, gamma, beta and betap (aka Beta Prime).
 #' @param x a numeric vector of values.
-#' @param dist names distributions: norm (deflaut), gamma, beta and betap (aka Beta Prime).
+#' @param dist names distributions: norm (deflaut), t-Student, gamma, beta and betap (aka Beta Prime).
 #' @param lambda numeric parametr
 #' @usage chi2.gof(x, dist="norm", lambda=1)
 #' @return An object of class "htest" containing the following components:
