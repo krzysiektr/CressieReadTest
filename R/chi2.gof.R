@@ -1,9 +1,9 @@
 #' @title The Cressie-Read test for continuous data.
 #'
 #' @description
-#' Goodnes of fit test for distributions: normal, t-Student, gamma, beta and betap (aka Beta Prime).
+#' Goodnes of fit test for distributions: normal, t-Student, cauchy, laplace, gamma, beta and betap (aka Beta Prime).
 #' @param x a numeric vector of values.
-#' @param dist names distributions: norm (deflaut), t-Student, gamma, beta and betap (aka Beta Prime).
+#' @param dist names distributions: norm (deflaut), t-Student, cauchy, laplace, gamma, beta and betap (aka Beta Prime).
 #' @param lambda numeric parametr
 #' @usage chi2.gof(x, dist="norm", lambda=1)
 #' @return An object of class "htest" containing the following components:
@@ -26,7 +26,7 @@
 #' @references Noel Cressie and Timothy R. C. Read (1984).
 #' Multinomial Goodness-of-Fit Test. Journal of the Royal Statistical Society. Series B (Methodological), Vol. 46, No. 3 (1984), 440-464.
 #'
-#' @importFrom stats dgamma dpois dnbinom dnorm dbeta nlminb pchisq pgamma ppois pnbinom pnorm pbeta sd var integrate dt pt
+#' @importFrom stats dcauchy pcauchy dgamma dpois dnbinom dnorm dbeta nlminb pchisq pgamma ppois pnbinom pnorm pbeta sd var IQR median integrate dt pt
 #'
 #' @seealso \code{\link[nortest]{pearson.test}} \code{\link{ks.test}} \code{\link[ADGofTest]{ad.test}} \code{\link[vsgoftest]{vs.test}}
 #' @export
@@ -124,7 +124,7 @@ chi2.gof=function(x, dist="norm", lambda=1)
       sigma = par[3]
       -sum(log(dt_ls(x = x, df=df, mu=mu, sigma=sigma)))
     },data = data.frame(x=x))
-    res <- nlminb(start = c(df=3 ,mu=mean(x),sigma=sd(x),lower=c(1,-1, 0.001) ),objective=LL)
+    res <- nlminb(start = c(df=3 ,mu=mean(x),sigma=sd(x) ),lower=c(1,-1, 0.00001),objective=LL)
     G1 <- as.numeric(res$par[1])
     G2 <- as.numeric(res$par[2])
     G3 <- as.numeric(res$par[3])
@@ -135,6 +135,48 @@ chi2.gof=function(x, dist="norm", lambda=1)
     pvalue5 <- pchisq(ST5, n.classes - 2 - 1, lower.tail = FALSE)
     RVAL <- list(statistic = c(CR=ST5), parameter = c(df=Df,lambda=lambda), p.value = pvalue5, estimate =c(df=G1, mu=G2, std=G3,loglik=GG),
                  method = "Cressie-Read Goodness-of-Fit Test - t-Student distributions",
+                 data.name = DNAME)
+    class(RVAL) <- "htest"
+    return(RVAL)
+  }
+  else if(dist=="cauchy") {
+    LL <- with(function(par,data) {
+      location= par[1]
+      scale= par[2]
+      -sum(dcauchy(x=x, location = location, scale = scale, log=TRUE))
+    },data = data.frame(x=x))
+    res <- nlminb(start = c(location=median(x), scale=IQR(x)/2),lower=c(-Inf, 0.00001),objective=LL)
+    G1 <- as.numeric(res$par[1])
+    G2 <- as.numeric(res$par[2])
+    GG <- -1*as.numeric(res$objective)
+    num6 <- floor(1 + n.classes * pcauchy(x, location=G1, scale=G2))
+    count6 <- tabulate(num6, n.classes)
+    ST6 <- (2/(lambda*(lambda+1)))*sum(count6*( (count6/(n*prob))^(lambda)-1 ))
+    pvalue6 <- pchisq(ST6, n.classes - 2 - 1, lower.tail = FALSE)
+    RVAL <- list(statistic = c(CR=ST6), parameter = c(df=Df,lambda=lambda), p.value = pvalue6, estimate =c(location=G1, scale=G2, loglik=GG),
+                 method = "Cressie-Read Goodness-of-Fit Test - Cauchy distributions",
+                 data.name = DNAME)
+    class(RVAL) <- "htest"
+    return(RVAL)
+  }
+  else if(dist=="laplace") {
+    dL <- function(x,location,scale) exp(-abs(x-location)/scale)/(2*scale)
+    pL <- function(h,location,scale) integrate(function(x) exp(-abs(x-location)/scale)/(2*scale),-Inf,h)
+    LL <- with(function(par,data) {
+      location= par[1]
+      scale= par[2]
+      -sum(log(dL(x=x, location = location, scale = scale)))
+    },data = data.frame(x=x))
+    res <- nlminb(start = c(location=median(x), scale=IQR(x)/2),lower=c(-Inf, 0.00001),objective=LL)
+    G1 <- as.numeric(res$par[1])
+    G2 <- as.numeric(res$par[2])
+    GG <- -1*as.numeric(res$objective)
+    num7 <- floor(1 + n.classes * sapply(1:length(x),function(i) pL(x[i],location=G1, scale=G2)$value))
+    count7 <- tabulate(num7, n.classes)
+    ST7 <- (2/(lambda*(lambda+1)))*sum(count7*( (count7/(n*prob))^(lambda)-1 ))
+    pvalue7 <- pchisq(ST7, n.classes - 2 - 1, lower.tail = FALSE)
+    RVAL <- list(statistic = c(CR=ST7), parameter = c(df=Df,lambda=lambda), p.value = pvalue7, estimate =c(location=G1, scale=G2, loglik=GG),
+                 method = "Cressie-Read Goodness-of-Fit Test - Laplace distributions",
                  data.name = DNAME)
     class(RVAL) <- "htest"
     return(RVAL)
