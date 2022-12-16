@@ -9,7 +9,7 @@ chi2.test(x, dist = "pois", lambda = 1)
 \arguments{
 \item{x}{a numeric vector of values.}
 
-\item{dist}{names distributions: pois (deflaut) or nbinom}
+\item{dist}{names distributions: pois (deflaut), binom or nbinom}
 
 \item{lambda}{parameter lambda test Cressie-Read.}
 }
@@ -23,12 +23,13 @@ An object of class "htest" containing the following components:
          }
 }
 \description{
-Goodnes of fit test for two distributions: Poisson and negative binomial.
+Goodnes of fit test for two distributions: Poisson, binomial and negative binomial.
 }
 \examples{
 set.seed(2305)
 g <- rpois(120,3)
 chi2.test(g)
+
 }
 \references{
 Noel Cressie and Timothy R. C. Read (1984).
