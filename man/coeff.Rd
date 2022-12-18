@@ -10,7 +10,8 @@ coeff(x)
 \item{x}{contingency table.}
 }
 \description{
-Computes contingency coefficient: C-Pearson, T-Czupurow, Phi-Yule'a, V-Cramer.
+Computes contingency coefficient: Q_Yulea, Phi, C-Pearson, C_adj, V-Cramer, T-Tschuprow for 2x2 table or
+C-Pearson, C_adj, V-Cramer, T-Tschuprow for rxc table where r>2 or c>0.
 }
 \examples{
 # data:

@@ -1,7 +1,8 @@
 #' @title The Cressie-Read test for contingency table.
 #'
 #' @description
-#' Computes D-squared Cressie-Read test for contingency table.
+#' Computes D-squared Cressie-Read test for contingency table and contingency coefficient: Q_Yulea, Phi, C-Pearson, C_adj, V-Cramer, T-Tschuprow for 2x2 table or
+#' C-Pearson, C_adj, V-Cramer, T-Tschuprow for rxc table where r>2 or c>0.
 #' @param x contingency table.
 #' @param lambda lambda parameter lambda test Cressie-Read.
 #' @usage cr.test(x, lambda=2/3)
