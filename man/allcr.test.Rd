@@ -12,7 +12,8 @@ allcr.test(x, lambda = 2/3)
 \item{lambda}{parameter lambda test Cressie-Read.}
 }
 \value{
-The whole family of tests Cressie-Read and contingency coefficient: C-Pearson, T-Czupurow, Fi-Yule'a, V-Cramer.
+The whole family of tests Cressie-Read and contingency coefficient: Q_Yulea, Phi, C-Pearson, C_adj, V-Cramer, T-Tschuprow for 2x2 table or
+Phi, C-Pearson, C_adj, V-Cramer, T-Tschuprow for rxc table where r>2 or c>2
 }
 \description{
 All tests of the family Cressie-Read and contingency coefficient.

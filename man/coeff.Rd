@@ -11,7 +11,7 @@ coeff(x)
 }
 \description{
 Computes contingency coefficient: Q_Yulea, Phi, C-Pearson, C_adj, V-Cramer, T-Tschuprow for 2x2 table or
-C-Pearson, C_adj, V-Cramer, T-Tschuprow for rxc table where r>2 or c>0.
+C-Pearson, C_adj, V-Cramer, T-Tschuprow for rxc table where r>2 or c>2.
 }
 \examples{
 # data:
