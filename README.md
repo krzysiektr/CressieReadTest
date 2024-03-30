@@ -3,7 +3,7 @@
 install packages
 
 ```
-devtools::install_github("krzysiektr/CressieReadTest")
+remotes::install_github("krzysiektr/CressieReadTest")
 ```
 
 ## Discrete distributions
